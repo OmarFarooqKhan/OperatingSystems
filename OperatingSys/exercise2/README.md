@@ -1,4 +1,4 @@
-Your task in exercise 2 is to implement a logging server and client.
+
 
 # Client
 
