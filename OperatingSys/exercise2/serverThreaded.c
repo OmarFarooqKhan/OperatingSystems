@@ -40,18 +40,20 @@ void *processRequest (void *args) {
 
   pthread_mutex_lock(&mut);
   in_file  = fopen(ptr, "a");
-  while(n > 0){
-    if(in_file == NULL) {
+  if(in_file == NULL) {
       fprintf(stderr,"unable to open file");
-      break;
-    }
+      pthread_mutex_unlock(&mut);
+  }
+  while(n > 0){
 
     if(fprintf(in_file, "%d ", counter) < 0){
       fprintf(stderr, "unable to write to file");
+      pthread_mutex_unlock(&mut);
       break;
     }  
     if(fprintf(in_file, "%s", buffer)< 0){
       fprintf(stderr, "unable to write to file");
+      pthread_mutex_unlock(&mut);
       break;
     }
 
@@ -71,8 +73,9 @@ void *processRequest (void *args) {
   }
   if(in_file != NULL){
     fclose(in_file);
+    pthread_mutex_unlock(&mut);
   }
-  pthread_mutex_unlock(&mut);
+
   close (*newsockfd); /* important to avoid memory leak */  
   free (newsockfd);
   pthread_exit (NULL);
